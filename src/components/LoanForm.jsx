@@ -1,6 +1,12 @@
-import { useState , useEffect } from "react";
+import { useState , useEffect ,useContext } from "react";
 import PopUp from "./PopUp";
+import InputComp from "./InputComp";
+import { InputContext } from "../contexts/InpContext";
+import { StyleCon } from "../contexts/StylesContext";
+
+
 const LoanForm = () => {
+  const styleContext = useContext(StyleCon);
   const [formData, setFormData] = useState({
     name: "",
     number: "",
@@ -16,16 +22,17 @@ const LoanForm = () => {
   const [massege,setMassege] = useState("the form has been submitted successfully")
 
   const handelNameInput = (event) => {
-    setFormData({...formData,name:event.target.value })
+    setFormData({...formData,name:event })
   }
  
   
   const handelPhoneNumber = (event) => {
-    setFormData({...formData,number:event.target.value })
-  }
+    setFormData({...formData,number:event})
+    }
+    
   
   const handelAgeInput = (event) => {
-    setFormData({...formData,ageD:event.target.value })
+    setFormData({...formData,ageD:event })
   }
 
   const handelISEmp = () => {
@@ -48,8 +55,6 @@ const LoanForm = () => {
     };
     
     const handelData = () => {
-        console.log(formData.name.length)
-        console.log(+formData.ageD < 18 )
         if (formData.name.length < 3) setMassege( "the name is too short");
         else if (+formData.ageD < 18 || +formData.ageD > 100) setMassege ("the age not in the range");
         else if (formData.number.length < 8) setMassege("the number is un correct");
@@ -63,31 +68,8 @@ const LoanForm = () => {
     else {
       setIsFill(false)
     }
-  },[formData])
-
-  const styleDive = {
-    display: "flex",
-    gap:"5px",
-    width: "600px",
-    marginTop: "20px",
-    padding: "10px",
-    alignItems:"center"
-  }
-  const styleLable ={
-            color: "white",
-            fontSize: "20px",
-            width:"15%"
-  }
-  
-  const styleInput ={
-              width: "85%",
-              outline: "none",
-              border: "none",
-              padding: "10px",
-              fontSize:"17px"
-            } 
-
-  
+  }, [formData])
+    
   return (
     <>
       <form  style={
@@ -108,34 +90,39 @@ const LoanForm = () => {
           Requesting a Loan
         </h1>
         <hr style={{width:"97%"}}/>
-        <div style={styleDive}>
-          <label htmlFor="" style={styleLable}>
-            name :
-          </label>
-          <input type="text" value={formData.name} onChange={handelNameInput} style={styleInput}/>
-        </div>
+        
+        <InputContext.Provider value={{
+            inpName:"name",
+            inpVal:formData.name,
+            inpHandel:handelNameInput
+        }}>
+            <InputComp />
+        </InputContext.Provider>
+        
 
-        <div style={styleDive}>
-          <label htmlFor="" style={styleLable}>
-            phone Number :
-          </label>
-          <input type="text" value={formData.number} onChange={handelPhoneNumber} style={styleInput}/>
-        </div>
+        <InputContext.Provider value={{
+            inpName:"phone number",
+            inpVal:formData.number,
+            inpHandel:handelPhoneNumber
+        }}>
+            <InputComp />
+        </InputContext.Provider>
 
-        <div style={styleDive}>
-          <label htmlFor="" style={styleLable}>
-            age :
-          </label>  
-          <input type="text" value={formData.ageD} onChange={handelAgeInput} style={styleInput}/>
-        </div>
+        <InputContext.Provider value={{
+            inpName:"age",
+            inpVal:formData.ageD,
+            inpHandel:handelAgeInput
+        }}>
+            <InputComp />
+        </InputContext.Provider>
 
         <div style={{
-          ...styleDive,
+          ...styleContext.styleDiv,
           justifyContent: "center",
           flexDirection:"column"
         }}>
           <label htmlFor="" style={{
-            ...styleLable,
+            ...styleContext.styleLable,
             width: "152px",
             margin:"auto"
           }}>
@@ -144,11 +131,11 @@ const LoanForm = () => {
           <input type="checkbox" checked={formData.isEmpeloyee} onChange={handelISEmp} />
         </div>
 
-        <div style={styleDive}>
-          <label htmlFor="" style={styleLable}>
+        <div style={styleContext.styleDiv}>
+          <label htmlFor="" style={styleContext.styleLable}>
             salary :
           </label>
-          <select style={styleInput} value={formData.salarey} onChange={handleSelectChange}>
+          <select style={styleContext.styleInput} value={formData.salarey} onChange={handleSelectChange}>
             <option value="" >-- select --</option>
             <option value="1000" >1000</option>
             <option value="1500" >1500</option>
